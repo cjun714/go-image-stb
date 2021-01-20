@@ -2,15 +2,15 @@ package stb
 
 // #include "../stb_image/config.h"
 // #include "../stb_image/stb_image.h"
-// #cgo LDFLAGS: -lm
+// #cgo LDFLAGS: -lm -O3
 import "C"
 import (
 	"errors"
 	"unsafe"
 )
 
-// Load is to load an image file from a specified path
-func Load(path string) (*uint8, int32, int32, int32, error) {
+// Load is to load image file from a specified path
+func Load(path string) (*uint8, int, int, int, error) {
 	var x, y, comp int32
 	dataPtr := (*uint8)(
 		C.stbi_load(C.CString(path),
@@ -21,11 +21,11 @@ func Load(path string) (*uint8, int32, int32, int32, error) {
 	if dataPtr == nil {
 		return nil, 0, 0, 0, errors.New("Load image failed: " + path)
 	}
-	return dataPtr, x, y, comp, nil
+	return dataPtr, int(x), int(y), int(comp), nil
 }
 
-// LoadBytes is to load an image from []byte
-func LoadBytes(data []byte) (*uint8, int32, int32, int32, error) {
+// LoadBytes is to load image from []byte
+func LoadBytes(data []byte) (*uint8, int, int, int, error) {
 	var x, y, comp int32
 	dataPtr := (*uint8)(C.stbi_load_from_memory(
 		(*C.uint8_t)(unsafe.Pointer(&data[0])),
@@ -37,7 +37,7 @@ func LoadBytes(data []byte) (*uint8, int32, int32, int32, error) {
 	if dataPtr == nil {
 		return nil, 0, 0, 0, errors.New("Load image failed")
 	}
-	return dataPtr, x, y, comp, nil
+	return dataPtr, int(x), int(y), int(comp), nil
 }
 
 // Free is to free an image data
