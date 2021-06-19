@@ -37,6 +37,15 @@ func LoadBytes(data []byte) (*uint8, int, int, int, error) {
 	return dataPtr, int(x), int(y), int(comp), nil
 }
 
+func LoadtoBytes(path string) ([]uint8, int, int, int, error) {
+	pixPtr, w, h, comps, e := Load(path)
+	if e != nil {
+		return nil, 0, 0, 0, e
+	}
+
+	return C.GoBytes(unsafe.Pointer(pixPtr), C.int(w*h*comps)), w, h, comps, nil
+}
+
 // Free is to free an image data
 func Free(dataPtr *uint8) {
 	if dataPtr != nil {
